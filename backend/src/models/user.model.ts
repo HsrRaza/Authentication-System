@@ -1,29 +1,59 @@
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
-    name:{
-        type:String,
-        required:true
+    name: {
+        type: String,
+        required: true
     },
-    email:{
-        type:String,
-        required:true
+    email: {
+        type: String,
+        required: true
     },
-    password:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
-    role:{
-        
+    role: {
+        type: String,
+        required: true,
+        enum: ["admin", "user"],
+        default:"user"
+    },
+    isVerified: {
+        type: Boolean,
+        default:false
+    },
 
+// password reset
+    forgetPassToken: {
+        type: String
     },
-    isVerified:{
-        type:String,
-        required:true
+    forgetPassExp: {
+        type: String
     },
-    isActive:{
-        type:Boolean,
+
+ // email verify
+    
+    emailVerificationToken: {
+        type: String
+    },
+    emailTokenExp: {
+        type: Date
+    },
+
+// session control
+
+    refreshToken: {
+        type: String
+    },
+    refreshTokenExpiry:{
+        type:Date
+    },
+
+    // soft delete
+    isActive: {
+        type: Boolean,
     }
-}, {timestamps:true})
+}, { timestamps: true })
 
-export const user = mongoose.model("User", userSchema) ;
+export const User = mongoose.model("User", userSchema);
