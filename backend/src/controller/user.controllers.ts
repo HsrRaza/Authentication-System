@@ -161,3 +161,7 @@ export const login = async (req: Request, res: Response) => {
  }
 
 }
+
+export const forgetPassword = async(req:Request , res:Response)=>{
+  
+}

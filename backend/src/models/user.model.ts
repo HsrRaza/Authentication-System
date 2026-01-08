@@ -29,7 +29,7 @@ const userSchema = new Schema({
         type: String
     },
     forgetPassExp: {
-        type: String
+        type: Date
     },
 
  // email verify
