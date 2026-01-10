@@ -69,7 +69,7 @@ export const register = async (req: Request, res: Response) => {
 }
 
 export const verifyEmail = async (req: Request, res: Response) => {
-    const { token } = req.query;
+    const { token } = req.params;
 
     try {
         const data = await User.findOne({

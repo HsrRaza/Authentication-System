@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { User } from "../models/user.model";
+
 
 
 export const verifyJWT = async(req:Request, res:Response, next:NextFunction)=>{
