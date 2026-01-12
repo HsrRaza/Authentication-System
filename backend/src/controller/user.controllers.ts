@@ -150,6 +150,7 @@ export const login = async (req: Request, res: Response) => {
             .cookie("accessToken", accessToken, {
                 httpOnly: true,
                 secure: false,
+                sameSite:"none"
             })
             .status(200)
             .json({
