@@ -4,6 +4,8 @@ import { registerSchema, loginSchema } from "../lib/zod";
 import bcrypt from "bcrypt"
 import crypto from "crypto"
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 
 const generateAcessToken = (payload: { userId: string, role: string }) => {
@@ -69,7 +71,7 @@ export const register = async (req: Request, res: Response) => {
 }
 
 export const verifyEmail = async (req: Request, res: Response) => {
-    const { token } = req.query;
+    const { token } = req.params;
 
     try {
         const data = await User.findOne({
@@ -86,7 +88,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
         data.isVerified = true;
         data.emailVerificationToken = undefined;
-        data.emailTokenExp = undefined;
+        data.emailTokenExp = null;
         await data.save();
 
         return res.status(200).json({
@@ -145,9 +147,10 @@ export const login = async (req: Request, res: Response) => {
         await user.save();
 
         res
-            .cookie("refreshToken", refreshToken, {
+            .cookie("accessToken", accessToken, {
                 httpOnly: true,
-                secure: true,
+                secure: false,
+                sameSite:"none"
             })
             .status(200)
             .json({
@@ -179,8 +182,8 @@ export const forgetPassword = async (req: Request, res: Response) => {
         // store token and exp  in db
 
         user.forgetPassToken = resetToken;
-        user.forgetPassExp = new Date(Date.now() + 15*60*1000)   // 15min
- 
+        user.forgetPassExp = new Date(Date.now() + 15 * 60 * 1000)   // 15min
+
         await user.save()
 
         //  reset link
@@ -190,70 +193,100 @@ export const forgetPassword = async (req: Request, res: Response) => {
 
 
         res.status(200).json({
-            success:true,
-            message:"Password  reset Link  sent to  your email "
+            success: true,
+            message: "Password  reset Link  sent to  your email "
         })
 
     } catch (errr) {
         res.status(500).json({
-            sucess:false,
-            message:"Something went wrong "
+            sucess: false,
+            message: "Something went wrong "
         })
 
     }
 }
 
-export const resetPassword = async(req: Request , res:Response) =>{
+export const resetPassword = async (req: Request, res: Response) => {
 
-   try {
-     const {userId , token} = req.params
-     const {password} = req.body
- 
-     //  check user
- 
-     const user = await User.findById(userId);
- 
-     if(!user){
-         return res.status(404).json({
-             success:false,
-             messsage:"Invalid User"
-         })
-     }
- 
-     //  validate token
-     if(user.forgetPassToken !=token ||  !user.forgetPassExp || user.forgetPassExp.getTime() < Date.now() ){
-          return res.status(400).json({
-             success:false,
-             message:" Invalid or expired link "
-          })
-     }
- 
-     //  hash password
- 
-     const salt = await bcrypt.genSalt(10);
-     user.password = await bcrypt.hash(password , salt);
- 
-     // invalidate token
- 
-     user.forgetPassToken = null;
-     user.forgetPassExp =  null;
- 
-     await user.save()
- 
-     return res.status(200).json({
-        sucess:true,
-        message:'Password reset successfull'
-     })
+    try {
+
+        if (!req.body || !req.body.password) {
+            return res.status(400).json({ message: "Password is required" });
+        }
+
+        const { userId, token } = req.params
+        const { password } = req.body
 
 
-   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-        success:false ,
-        message:"Something went wrong"})
-   }
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid link" });
+        }
+
+        const decodedToken = decodeURIComponent(token);
+
+        //  check user
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                messsage: "Invalid User"
+            })
+        }
+
+        //  validate token
+        if (user.forgetPassToken != decodedToken || !user.forgetPassExp || user.forgetPassExp.getTime() < Date.now()) {
+            return res.status(400).json({
+                success: false,
+                message: " Invalid or expired link "
+            })
+        }
+
+        //  hash password
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+
+        // invalidate token
+
+        user.forgetPassToken = null;
+        user.forgetPassExp = null;
+
+        await user.save()
+
+        return res.status(200).json({
+            sucess: true,
+            message: 'Password reset successfull'
+        })
+
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong"
+        })
+    }
 }
 
-export const logout = async(req:Request , res:Response) =>{
-    
+export const getMe = async (req: AuthRequest, res: Response) => {
+    return res.status(200).json({
+        success: true,
+        message: "user fetched",
+        user:req.user
+    }
+    )
+}
+
+export const logout = async ( req:AuthRequest , res:Response)=>{
+    res.cookie("accessToken", "",{
+        httpOnly:true,
+        expires:new Date(0),
+
+    })
+      return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 }
