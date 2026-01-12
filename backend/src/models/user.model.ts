@@ -1,6 +1,26 @@
 import mongoose, { Schema } from "mongoose";
 
-const userSchema = new Schema({
+
+interface IUser {
+    _id?:string,
+    name:string,
+    email:string,
+    password:string,
+    role:string,
+    isVerified:boolean,
+    forgetPassToken:string | undefined | null,
+    forgetPassExp:Date | null,
+    emailVerificationToken:string | undefined | null,
+    emailTokenExp:Date | null,
+    refreshToken:string | undefined | null,
+    refreshTokenExpiry:Date | null,
+    isActive:boolean
+
+}
+
+
+
+const userSchema = new Schema<IUser>({
     name: {
         type: String,
         required: true
@@ -56,4 +76,4 @@ const userSchema = new Schema({
     }
 }, { timestamps: true })
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model<IUser>("User", userSchema);
