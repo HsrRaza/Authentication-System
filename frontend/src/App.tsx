@@ -1,8 +1,11 @@
+import SignUp from "./feature/auth/SignUp"
 
 
 const App = () => {
   return (
-    <div>App</div>
+    <div>
+      <SignUp/>
+    </div>
   )
 }
 

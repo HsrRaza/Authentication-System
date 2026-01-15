@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { api } from '../../lib/api';
+import { signSchema } from '../validation/zod';
 
 const SignUp = () => {
 
@@ -13,17 +14,19 @@ const SignUp = () => {
 
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false);
-    const [success , setSuccess] = useState("")
+    const [success, setSuccess] = useState("")
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
-    const handleSubmit = async(e: React.FormEvent) =>  {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (!form.name || !form.email || !form.password || !form.role) {
-            setError("All fields  are required")
+        const validation = signSchema.safeParse(form);
+
+        if (!validation.success) {
+            setError(validation.error.issues[0].message)
             return
         }
         setError("")
@@ -33,26 +36,26 @@ const SignUp = () => {
             setLoading(true);
             setError("");
 
-            await api.post("/user/register", form);
+            await api.post("/user/register", validation.data);
 
             console.log("User registered");
 
             setSuccess("Accout Created successfully  ")
             setForm({
-                name:"",
-                email:"",
-                password:"",
-                role:""
+                name: "",
+                email: "",
+                password: "",
+                role: ""
             });
-            
 
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }catch(err : any){
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
             setError(
                 err.response?.data?.message || "Something went Wrong"
             )
-        }finally{
+        } finally {
             setLoading(false)
         }
     }
@@ -98,8 +101,8 @@ const SignUp = () => {
                     {loading ? "Signing up..." : "Sign Up"}
                 </button>
 
-                {error && <p style={{color:"red"}}>{error}</p>}
-                {success && <p style={{color:"green"}}>{success}</p>}
+                {error && <p style={{ color: "red" }}>{error}</p>}
+                {success && <p style={{ color: "green" }}>{success}</p>}
 
             </form>
 
