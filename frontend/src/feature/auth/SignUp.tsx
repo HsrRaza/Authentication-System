@@ -63,41 +63,56 @@ const SignUp = () => {
 
 
     return (
-        <div>
+        <div className='bg-white shadow-xl p-5 w-125 h-auto rounded-xl '>
+
+            <h2 className='text-xl text-center'>Sign Up</h2>
 
             <form onSubmit={handleSubmit}>
 
 
 
-                <div>
-                    <label htmlFor="">Name</label>
+                <div className='
+                 w-full mb-2  p-2'>
+                    <p className='mb-2 text-lg '>Name</p>
                     <input type="text"
+                    className='px-2 py-3 outline-none bg-stone-200  rounded-lg w-full'
                         name='name'
+                        placeholder='Alex'
                         value={form.name}
                         onChange={handleChange} />
                 </div>
-                <div>
-                    <label htmlFor="">Email</label>
+                <div className=' w-full mb-2  p-2'>
+                   <p className='mb-2 text-lg'>Email</p>
                     <input type="text"
+                    placeholder='alex@gmail.com'
+                    className='px-2 py-3 outline-none bg-stone-200 rounded-lg w-full'
                         name='email'
                         value={form.email}
                         onChange={handleChange} />
                 </div>
-                <div>
-                    <label htmlFor="">Password</label>
+                <div className='w-full mb-2  p-2'>
+                   <p className='mb-2 text-lg'>Password</p>
                     <input type="password"
+                    className='px-2 py-3 outline-none bg-stone-200 rounded-lg w-full'
+                    placeholder='***'
                         name='password'
                         value={form.password}
                         onChange={handleChange} />
                 </div>
-                <div>
-                    <select name="role" value={form.role} onChange={handleChange}>
-                        <option value="">select role</option>
-                        <option value="user">user</option>
+                <div className='w-full mb-2 p-2'>
+                    <select name="role" value={form.role} onChange={handleChange} className='outline-none w-full text-lg'>
+                        <option value="" className='text-lg'>select role</option>
+                        <option value="user" className='text-lg'>user</option>
+                        <option value="user" className='text-lg'>admin</option>
                     </select>
                 </div>
 
-                <button type='submit' disabled={loading}>
+                <div className=' flex  justify-between p-2'>
+                   <p className='text-stone-600'> Already Have an Account</p>
+                    <p className='text-stone-600'>Login</p>
+                </div>
+
+                <button type='submit' disabled={loading} className='px-2 py-2  w-full bg-stone-950 text-stone-50 rounded-lg hover:bg-stone-900 cursor-pointer'>
                     {loading ? "Signing up..." : "Sign Up"}
                 </button>
 
