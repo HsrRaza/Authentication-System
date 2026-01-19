@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { api } from '../../lib/api';
 import { signSchema } from '../validation/zod';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
 
@@ -109,7 +110,7 @@ const SignUp = () => {
 
                 <div className=' flex  justify-between p-2'>
                    <p className='text-stone-600'> Already Have an Account</p>
-                    <p className='text-stone-600'>Login</p>
+                    <p className='text-stone-600'><Link to="/login">Login</Link></p>
                 </div>
 
                 <button type='submit' disabled={loading} className='px-2 py-2  w-full bg-stone-950 text-stone-50 rounded-lg hover:bg-stone-900 cursor-pointer'>

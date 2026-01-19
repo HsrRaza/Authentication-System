@@ -1,9 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { api } from '../../lib/api'
 import { loginSchema } from '../validation/zod'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 function Login() {
+
+
+    const {user} = useAuth()
+    const navigate = useNavigate()
+
+    useEffect( ()=>{
+    if(user){
+        navigate("/dashboard")
+    }
+    },[user, navigate])
 
     const [form, setForm] = useState({
         email: "",
@@ -19,6 +31,7 @@ function Login() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(form);
+        setError("")
 
       const validation = loginSchema.safeParse(form);
 
@@ -75,7 +88,7 @@ function Login() {
                 </div>
                 <div className='flex  justify-between p-2'>
                     <p className='text-stone-600'>Don't Have an Account</p>
-                    <p className='text-stone-600'>Sign Up</p>
+                    <p className='text-stone-600'><Link to="/signup">Sign Up</Link></p>
                 </div>
 
 
