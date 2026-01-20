@@ -1,9 +1,9 @@
 
-import { Navigate, Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 import Login from "./feature/auth/Login"
 import SignUp from "./feature/auth/SignUp"
 import Dashboad from "./feature/auth/Dashboad"
-import ProctectedRoutes from "./feature/auth/ProtectedRoute"
+
 
 
 const App = () => {
