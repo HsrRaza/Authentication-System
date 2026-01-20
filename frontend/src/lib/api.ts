@@ -9,8 +9,12 @@ export const api =axios.create({
 api.interceptors.response.use(
     (res)=> res,
     (err)=> {
-        if(err.response?.status === 401 ){
-            console.log("unauthorized  -> logout");
+
+        const status = err.response?.status;
+        const url = err.confiq?.url;
+
+        if(status  === 401 && !url?.includes("/user/me")){
+            console.log("401 on proctected API");
 
         }
         return Promise.reject(err)

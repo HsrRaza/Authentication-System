@@ -1,21 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { api } from '../../lib/api'
 import { loginSchema } from '../validation/zod'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { Link } from 'react-router-dom'
 
 function Login() {
 
 
-    const {user} = useAuth()
-    const navigate = useNavigate()
-
-    useEffect( ()=>{
-    if(user){
-        navigate("/dashboard")
-    }
-    },[user, navigate])
 
     const [form, setForm] = useState({
         email: "",
@@ -44,6 +35,9 @@ function Login() {
             setLoading(true)
             setError("")
             setSuccess("")
+
+            console.log("sending request ");
+            
 
             await api.post("/user/login", validation.data)
             console.log("User login Successful");

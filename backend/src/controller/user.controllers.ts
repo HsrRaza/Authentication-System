@@ -118,12 +118,12 @@ export const login = async (req: Request, res: Response) => {
             })
         }
 
-        if (!user.isVerified) {
-            return res.status(403).json({
-                sucess: false,
-                message: "Email Not verified"
-            })
-        }
+        // if (!user.isVerified) {
+        //     return res.status(403).json({
+        //         sucess: false,
+        //         message: "Email Not verified"
+        //     })
+        // }
 
         const isMatch = await bcrypt.compare(password, user.password)
 
@@ -150,7 +150,7 @@ export const login = async (req: Request, res: Response) => {
             .cookie("accessToken", accessToken, {
                 httpOnly: true,
                 secure: false,
-                sameSite:"none"
+                sameSite:"lax"
             })
             .status(200)
             .json({

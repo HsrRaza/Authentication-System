@@ -3,33 +3,59 @@ import { useEffect, useState } from "react"
 import { api } from "../../lib/api"
 
 
-function Dashboad() {
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [user, setUser] = useState<any>(null)
-    const [loading, setLoading] = useState(false)
+type User = {
+    name: string,
+    email: string
+
+}
+
+const Dashboad = () => {
+
+    const [user, setUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(true);
+    const [err, setErr] = useState("")
 
     useEffect(() => {
-        const fetchMe = async () => {
+        const fetchUser = async () => {
             try {
-                const res = await api.get("/user/me");
-                setUser(res.data.user)
-            } catch (err) {
-                setUser(null)
+                const res = await api.get("user/me");
+                setUser(res.data.user);
+            } catch (error) {
+                setErr("NOt Authorized. Please Login")
+
             } finally {
                 setLoading(false)
             }
+
         }
 
+        fetchUser();
+    }, [])
 
-        fetchMe();
-    }, []);
+    if (loading) return <h2>Loading a DashBoard</h2>
+    if (err) return <h2>{err}</h2>
+    if (!user) return <h2>No user  found</h2>
 
-    if (loading) return <p>loading ....</p>
-    if (!user) return <p>please login </p>
+
+
     return (
-        <div>
-            <h2>welcome {user.email}</h2>
+        <div className="p-4">
+            <div className="p-2 shadow-xl bg-white w-125 h-auto">
+
+                <h1 className="text-2xl text-center m-2">Dashboard</h1>
+                <div className="flex   justify-center gap-4 mt-2 ">
+                    <p className="text-xl ">Name :</p>
+                    <p className="text-xl">{user.name}</p>
+
+                </div>
+                <div className="flex   justify-center gap-4 mt-2 ">
+                    <p className="text-xl ">Email :</p>
+                    <p className="text-xl">{user.email}</p>
+
+                </div>
+
+            </div>
 
         </div>
     )
