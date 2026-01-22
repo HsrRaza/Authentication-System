@@ -2,10 +2,13 @@
 import React, { useState } from 'react'
 import { api } from '../../lib/api'
 import { loginSchema } from '../validation/zod'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { useAuthStore } from '../store/useAuthStore'
 
 function Login() {
 
+    const setUser = useAuthStore((s)=>s.setUser);
+    const isAuthecticated = useAuthStore((s)=>s.isAuthecticated);
 
 
     const [form, setForm] = useState({
@@ -16,6 +19,11 @@ function Login() {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState("")
+
+
+    if(isAuthecticated){
+        return <Navigate to="/dashboard" replace/>
+    }
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
@@ -41,8 +49,11 @@ function Login() {
 
             await api.post("/user/login", validation.data)
             console.log("User login Successful");
-
             setSuccess("User loggged IN")
+
+            const meRes = await api.get("/user/me");
+            setUser(meRes.data.user);
+
 
 
             setForm({
