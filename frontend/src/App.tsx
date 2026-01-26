@@ -12,6 +12,7 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-stone-100">
   
   <Routes>
+    <Route path="/" element={<SignUp/>}/>
     <Route path="/login" element={<Login/>}/>
     <Route path="/sign" element={<SignUp/>}/>
     <Route path="/dashboard" element={<ProctectedRoute>
