@@ -4,6 +4,7 @@ import { api } from '../../lib/api'
 import { loginSchema } from '../validation/zod'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
+import { toast } from 'react-toastify'
 
 function Login() {
 
@@ -16,9 +17,9 @@ function Login() {
         password: "",
     })
 
-    const [error, setError] = useState("")
+    // const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
-    const [success, setSuccess] = useState("")
+    // const [success, setSuccess] = useState("")
 
 
     if(isAuthecticated){
@@ -30,27 +31,29 @@ function Login() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(form);
-        setError("")
+        // setError("")
 
       const validation = loginSchema.safeParse(form);
 
       if(!validation.success){
-        setError(validation.error.issues[0].message)
+        // setError(validation.error.issues[0].message)
+        toast.error(validation.error.issues[0].message)
         return
       }
         try {
 
             setLoading(true)
-            setError("")
-            setSuccess("")
+            // setError("")
+            // setSuccess("")
 
             console.log("sending request ");
             
 
             await api.post("/user/login", validation.data)
             console.log("User login Successful");
-            setSuccess("User loggged IN")
-
+            // setSuccess("User loggged IN")
+            toast.success("User Logged Successfully")
+            
             const meRes = await api.get("/user/me");
             setUser(meRes.data.user);
 
@@ -61,7 +64,8 @@ function Login() {
                 password: ""
             })
         } catch (err: any) {
-            setError(err.response?.data?.message || "login Failed")
+            // setError(err.response?.data?.message || "login Failed")
+            toast.error(err.response?.data?.message || "login Failed")
         } finally {
             setLoading(false)
         }
@@ -103,8 +107,8 @@ function Login() {
                 </button>
 
 
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                {success && <p style={{ color: "green" }}>{success}</p>}
+                {/* {error && <p style={{ color: "red" }}>{error}</p>}
+                {success && <p style={{ color: "green" }}>{success}</p>} */}
             </form>
         </div>
     )

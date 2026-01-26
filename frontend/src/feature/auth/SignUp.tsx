@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { api } from '../../lib/api';
 import { signSchema } from '../validation/zod';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'
 
 const SignUp = () => {
+    const navigate = useNavigate()
 
     const [form, setForm] = useState({
         name: "",
@@ -13,6 +15,7 @@ const SignUp = () => {
 
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState("")
@@ -27,7 +30,8 @@ const SignUp = () => {
         const validation = signSchema.safeParse(form);
 
         if (!validation.success) {
-            setError(validation.error.issues[0].message)
+            // setError(validation.error.issues[0].message)
+            toast.error(validation.error.issues[0].message)
             return
         }
         setError("")
@@ -37,18 +41,19 @@ const SignUp = () => {
             setLoading(true);
             setError("");
 
-            await api.post("/user/register", validation.data);
+        const sign =  await api.post("/user/register", validation.data);
 
             console.log("User registered");
 
-            setSuccess("Accout Created successfully  ")
+            setSuccess(sign.data.message)
+            toast.success("Registered successfully , Now login to continue ")
             setForm({
                 name: "",
                 email: "",
                 password: "",
                 role: ""
             });
-
+            
 
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,10 +61,21 @@ const SignUp = () => {
             setError(
                 err.response?.data?.message || "Something went Wrong"
             )
+            toast.error( err.response?.data?.message || "Something went Wrong")
+            setSuccess("")
         } finally {
             setLoading(false)
         }
+
+        
     }
+
+    if(success){
+        setTimeout(()=>{
+            navigate("/login")
+        },1000)
+    }
+
 
 
 
@@ -117,8 +133,8 @@ const SignUp = () => {
                     {loading ? "Signing up..." : "Sign Up"}
                 </button>
 
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                {success && <p style={{ color: "green" }}>{success}</p>}
+                {/* {error && <p style={{ color: "red" }}>{error}</p>}
+                {success && <p style={{ color: "green" }}>{success}</p>} */}
 
             </form>
 
